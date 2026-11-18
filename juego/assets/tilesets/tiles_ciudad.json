@@ -1,0 +1,32 @@
+{
+  "tamano_tile": 32,
+  "columnas": 8,
+  "tiles": {
+    "0": "calle",
+    "1": "calle_grieta",
+    "2": "acera",
+    "3": "acera_borde_s",
+    "4": "acera_borde_n",
+    "5": "acera_borde_e",
+    "6": "acera_borde_o",
+    "7": "plaza",
+    "8": "plaza_b",
+    "9": "pasto",
+    "10": "pasto_flores",
+    "11": "pared",
+    "12": "pared_ventana",
+    "13": "pared_puerta",
+    "14": "pared_simbolo",
+    "15": "zocalo",
+    "16": "techo_rojo",
+    "17": "techo_terracota",
+    "18": "alero_rojo",
+    "19": "alero_terracota",
+    "20": "farol_arriba",
+    "21": "farol_abajo",
+    "22": "banca",
+    "23": "letrero",
+    "24": "maceta",
+    "25": "arbusto"
+  }
+}
