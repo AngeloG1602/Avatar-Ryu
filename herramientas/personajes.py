@@ -51,25 +51,30 @@ PERSONAJES = {
         carpeta="personajes",
         ch=jugable(
             piel=PIEL_CLARA, pelo=PELO_NEGRO, estilo_pelo="puntas", sonrisa=True,
-            cuerpo=ROJO_OSC, manga=ROJO_OSC, cuello=ROJO, cierre="#C9A227",
-            guante=NEGRO, pantalon=NEGRO, zapato=("#D9481E", "#F28C28", "#8E1B1B"),
+            cuerpo=ROJO, manga=ROJO, puno="#C9A227", dobladillo=ORO, camisa=NEGRO,
+            cuello=ROJO_OSC, cierre="#C9A227",
+            guante=NEGRO, pantalon=NEGRO, franja="#C9A227",
+            zapato=("#D9481E", "#F28C28", "#8E1B1B"), suela="#F4F1E8",
         ),
     ),
     "gao": dict(
         carpeta="personajes",
         ch=jugable(
-            piel=PIEL_MEDIA, pelo=PELO_CAFE, estilo_pelo="corto",
-            cuerpo=VERDE_OSC, manga=("#6B8E3D", "#C29A5B", "#3F5A2A"), cinturon="#7A5230",
+            piel=PIEL_MEDIA, pelo=PELO_CAFE, estilo_pelo="corto", ceja="#2B2230",
+            cuerpo=VERDE_OSC, manga=VERDE, puno="#7A5230", camisa=("#6B8E3D", "#C29A5B", "#3F5A2A"),
+            cinturon="#7A5230", hebilla="#C29A5B", dobladillo=MARRON,
             guante=MARRON, pantalon=("#7A5230", "#C29A5B", "#4A3B32"),
-            zapato=("#4A3B32", "#7A5230", "#2B2230"), cierre="#C29A5B",
+            zapato=("#4A3B32", "#7A5230", "#2B2230"), suela="#2B2230",
         ),
     ),
     "nerea": dict(
         carpeta="personajes",
         ch=jugable(
             piel=PIEL_OSCURA, pelo=PELO_NEGRO, estilo_pelo="trenza", trenza_lazo="#8FD3F0",
-            cuerpo=AZUL, manga=AZUL, bufanda=CELESTE, frasco="#F2F7FA",
-            pantalon=NEGRO, zapato=("#F2F7FA", "#F2F7FA", "#8FD3F0"), cierre="#F2F7FA",
+            ceja="#2B2230",
+            cuerpo=AZUL, manga=AZUL, puno="#F2F7FA", camisa=("#F2F7FA", "#F2F7FA", "#8FD3F0"),
+            cierre="#F2F7FA", bufanda=CELESTE, frasco="#F2F7FA", dobladillo=AZUL_OSC,
+            pantalon=NEGRO, zapato=("#F2F7FA", "#F2F7FA", "#8FD3F0"), suela="#3A86C8",
         ),
     ),
 }
