@@ -285,3 +285,41 @@ if __name__ == "__main__":
     for i, im in enumerate(imgs):
         hoja.alpha_composite(im.resize((32 * E, 32 * E), Image.NEAREST), (10 + i * (32 * E + 10), 10))
     hoja.save(os.path.join(RAIZ, "arte_fuente", "previews", "v3_ryu_opciones.png"))
+
+
+# ------------------------------------------------------------------ Ryu shonen: pelo medio despeinado
+_CUERPO_RYU = {k: v for k, v in _RYU_CARA_CUERPO.items() if k >= 19}
+RYU_SHONEN = filas({
+    1: [(6, "H"), (10, "H"), (13, "H")],
+    2: [(5, "HH"), (9, "HHH"), (13, "HH")],
+    3: [(4, "HHHHHHHHHHHH")],
+    4: [(3, "HHHHhhHHHHHHHH")],
+    5: [(2, "HHHHHhhhHHHHHHHH")],
+    6: [(1, "H"), (2, "HHHHHHHHgggHHHHH"), (18, "H")],
+    7: [(2, "HHHHHHHHHHHHHHHH")],
+    8: [(2, "HHHjHHHHjHHHHjHH")],
+    9: [(2, "H"), (3, "HHHSSSHHSSSHHH"), (17, "H")],
+    10: [(2, "j"), (3, "HHEEESHHSEEEHH"), (17, "j")],
+    11: [(3, "HHSSSSSHSSSSHH")],
+    12: [(4, "HSEEESSEEESH")],
+    13: [(5, "SWIESSEIWS")],
+    14: [(5, "SSSSSKSSSS")],
+    15: [(5, "KSSSMMMSSK")],
+    16: [(6, "KSSSSSSK")],
+    17: [(7, "KSSSSK")],
+    18: [(7, "KKKKKK")],
+    **_CUERPO_RYU,
+})
+RYU_SHONEN_NEGRO = dict(RYU_COLORES)
+RYU_SHONEN_NEGRO.update({"H": "#2B2230", "h": "#8E1B1B", "g": "#3B3846", "j": "#1A1420", "E": "#1A1420"})
+RYU_SHONEN_ROJO = dict(RYU_COLORES)
+RYU_SHONEN_ROJO.update({"H": "#8E1B1B", "h": "#D9481E", "g": "#F28C28", "j": "#2B2230", "E": "#1A1420"})
+
+if __name__ == "__main__":
+    E = 10
+    imgs = [render(RYU_SHONEN, RYU_SHONEN_NEGRO), render(RYU_SHONEN, RYU_SHONEN_ROJO),
+            render(*PRUEBA["gao"]), render(*PRUEBA["nerea"])]
+    hoja = Image.new("RGBA", (len(imgs) * (32 * E + 10) + 10, 32 * E + 20), (58, 54, 70, 255))
+    for i, im in enumerate(imgs):
+        hoja.alpha_composite(im.resize((32 * E, 32 * E), Image.NEAREST), (10 + i * (32 * E + 10), 10))
+    hoja.save(os.path.join(RAIZ, "arte_fuente", "previews", "v3_ryu_shonen.png"))
