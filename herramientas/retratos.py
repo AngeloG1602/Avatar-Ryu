@@ -117,7 +117,9 @@ OJO_CERRADO = [
 ]
 
 
-def cara_mask():
+def cara_mask(forma=None):
+    if forma == "cuadrada":
+        return elipse(30, 24, 13, 13) | poli([(17, 26), (43, 26), (43, 37), (38, 44), (23, 44), (18, 37)])
     return elipse(30, 25, 13, 14) | poli([(17, 27), (43, 27), (40, 38), (34, 44), (27, 44), (21, 38)])
 
 
@@ -126,7 +128,7 @@ def rostro(R, d):
     piel = d["piel"]
     cuello = rect(25, 36, 36, 50)
     R.pintar(cuello, (piel[2], piel[2], piel[2]), 1)
-    cara = cara_mask()
+    cara = cara_mask(d.get("cara"))
     R.pintar(cara, piel, 3)
     # oreja trasera
     R.pintar(elipse(17, 29, 3, 4), piel, 1)
@@ -141,6 +143,9 @@ def rostro(R, d):
     else:
         R.plantilla(OJO_CERCA, 23, 26, roles)
         R.plantilla(OJO_LEJOS, 35, 26, roles)
+        if d.get("pestanas"):
+            for x, y in ((23, 26), (22, 25), (40, 26), (41, 25)):
+                R.px(x, y, OSC)
     # cejas
     cj = d["ceja"]
     for (x0, y0, x1, y1) in d["cejas"]:
@@ -154,6 +159,9 @@ def rostro(R, d):
         R.color(linea([(29, 38), (31, 40), (36, 40), (38, 38)]), OSC)
         R.color(rect(31, 39, 36, 39), BLANCO)
         R.color(linea([(30, 38), (30, 38)]), OSC)
+    elif boca == "leve":
+        R.color(linea([(30, 39), (35, 39)]), d["piel"][2])
+        R.px(36, 38, d["piel"][2])
     elif boca == "firme":
         R.color(linea([(30, 39), (37, 39)]), OSC)
         R.px(38, 38, piel[2])
@@ -319,6 +327,87 @@ RETRATOS = {
 }
 
 
+def pelo_flequillo(R, d, cara):
+    """Ryu: pelo corto texturizado con mechones en punta sobre la frente, lados cortos."""
+    t = d["pelo"]
+    m = poli([(13, 8), (47, 8), (47, 24), (44, 24), (43, 28), (40, 22), (38, 22), (36, 28), (33, 21),
+              (31, 21), (29, 28), (26, 21), (24, 21), (22, 28), (19, 22), (16, 24), (13, 24)]) & elipse(30, 21, 17, 17)
+    m |= poli([(17, 11), (19, 6), (23, 9)]) | poli([(24, 8), (27, 4), (31, 7)]) | poli([(31, 7), (35, 4), (38, 8)]) | poli([(38, 9), (42, 7), (43, 12)])
+    m |= rect(14, 18, 18, 25) | rect(42, 18, 45, 25)
+    R.pintar(m, t, 3)
+    R.borde_interno(m, t[2], cara)
+    for a, b in (((21, 11), (24, 16)), ((28, 8), (30, 14)), ((35, 9), (37, 14))):
+        R.color(linea([a, b]), t[1])
+
+
+def pelo_gao(R, d, cara):
+    """Gao: pelo castaño corto con remolino arriba y flequillo desordenado."""
+    t = d["pelo"]
+    m = poli([(13, 6), (47, 6), (47, 25), (44, 25), (42, 21), (39, 24), (36, 20), (32, 23), (28, 20),
+              (24, 24), (21, 21), (18, 27), (13, 27)]) & elipse(30, 22, 16, 17)
+    m |= rect(14, 20, 17, 28) | rect(42, 20, 45, 26)
+    remolino = poli([(27, 9), (30, 0), (35, 3), (33, 9)])
+    R.pintar(m | remolino, t, 3)
+    R.borde_interno(m, t[2], cara)
+    R.color(linea([(30, 2), (31, 8)]), t[1])
+    R.color(linea([(22, 12), (26, 9)]), t[1]); R.color(linea([(36, 10), (40, 13)]), t[1])
+
+
+def cola_nerea(R, d):
+    """Coleta alta: sale de la coronilla y cae por detrás a la derecha."""
+    t = d["pelo"]
+    cola = poli([(38, 8), (45, 1), (52, 5), (53, 18), (51, 32), (48, 46), (44, 42), (46, 28), (45, 16)])
+    R.pintar(cola, t, 2)
+    R.color(linea([(48, 6), (49, 30)]), t[1])
+
+
+def pelo_coleta(R, d, cara):
+    """Nerea: flequillo abierto al centro que enmarca la cara + lazo de la coleta."""
+    t = d["pelo"]
+    m = poli([(10, 4), (50, 4), (50, 26), (44, 26), (42, 22), (36, 19), (31, 22), (30, 22), (25, 19),
+              (19, 22), (17, 27), (10, 27)]) & elipse(30, 21, 16, 16)
+    m |= poli([(13, 21), (20, 22), (20, 40), (17, 45), (12, 37)])
+    m |= poli([(40, 22), (47, 21), (48, 37), (44, 45), (41, 37)])
+    R.pintar(m, t, 3)
+    R.borde_interno(m, t[2], cara)
+    R.color(linea([(30, 7), (30, 20)]), t[2])
+    R.color(linea([(20, 12), (26, 9)]), t[1]); R.color(linea([(34, 9), (40, 12)]), t[1])
+    R.pintar(poli([(39, 6), (44, 3), (46, 7), (41, 10)]), (d["lazo"], "#8FD3F0", "#1E4F8C"), 1)
+
+
+def ropa_gao_v3(R, d):
+    torso(R, ("#C29A5B", "#E8D27A", "#7A5230"))
+    R.pintar(poli([(8, 64), (11, 53), (19, 47), (25, 44), (26, 64)]), P.VERDE_OSC, 2)
+    R.pintar(poli([(36, 44), (45, 47), (52, 53), (55, 64), (36, 64)]), P.VERDE_OSC, 2)
+    R.pintar(poli([(25, 44), (36, 44), (34, 50), (27, 50)]), ("#7A5230", "#C29A5B", "#4A3B32"), 1)
+    R.color(rect(38, 56, 39, 57), "#C29A5B")
+
+
+def ropa_nerea_v3(R, d):
+    torso(R, P.AZUL)
+    R.pintar(poli([(25, 44), (36, 44), (34, 64), (27, 64)]), ("#F2F7FA", "#F2F7FA", "#8FD3F0"), 1)
+    R.color(linea([(25, 44), (22, 64)]), "#8FD3F0"); R.color(linea([(36, 44), (39, 64)]), "#8FD3F0")
+    R.color(rect(9, 60, 20, 63), "#F2F7FA"); R.color(rect(45, 60, 56, 63), "#1E4F8C")
+
+
+RETRATOS["ryu"] = dict(
+    piel=P.PIEL_CLARA, iris="#7A5230", ceja="#2B2230", ceja_grosor=2, cara="cuadrada",
+    cejas=[(22, 22, 28, 23), (35, 23, 41, 22)], boca="leve",
+    pelo=P.PELO_NEGRO, peinado=pelo_flequillo, ropa=ropa_ryu,
+)
+RETRATOS["gao"] = dict(
+    piel=P.PIEL_MEDIA, iris="#7A5230", ceja="#2B2230", ceja_grosor=2, cara="cuadrada",
+    cejas=[(22, 23, 29, 23), (35, 23, 41, 23)], boca="firme",
+    pelo=("#7A5230", "#C29A5B", "#4A3B32"), peinado=pelo_gao, ropa=ropa_gao_v3,
+)
+RETRATOS["nerea"] = dict(
+    piel=P.PIEL_CLARA, iris="#3A86C8", ceja="#4A3B32", pestanas=True,
+    cejas=[(22, 23, 28, 22), (35, 22, 41, 23)], boca="neutral",
+    pelo=("#4A3B32", "#7A5230", "#2B2230"), lazo="#3A86C8",
+    atras=cola_nerea, peinado=pelo_coleta, ropa=ropa_nerea_v3,
+)
+
+
 def barba_tsering(R, d, cara):
     b = ("#F4F1E8", "#F4F1E8", "#C8C8C0")
     m = poli([(19, 32), (24, 36), (30, 38), (36, 36), (41, 32), (40, 44), (34, 52), (27, 52), (21, 44)])
@@ -334,6 +423,8 @@ def dibujar(nombre):
     d = RETRATOS[nombre]
     R = Retrato()
     # el pelo largo de Nerea va detrás de todo
+    if d.get("atras"):
+        d["atras"](R, d)
     d["ropa"](R, d)
     cara = rostro(R, d)
     d["peinado"](R, d, cara)
