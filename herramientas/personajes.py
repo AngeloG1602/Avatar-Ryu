@@ -79,6 +79,80 @@ PERSONAJES = {
     ),
 }
 
+
+ROBA_TSERING = ("#F4F1E8", "#F4F1E8", "#C8C8C0")
+ELEMENTOS_SOLDADO = {
+    "fuego": "#D9481E",
+    "agua": "#3A86C8",
+    "tierra": "#6B8E3D",
+    "aire": "#F4F1E8",
+}
+
+
+def soldado(elemento):
+    c = ELEMENTOS_SOLDADO[elemento]
+    return dict(
+        carpeta="enemigos",
+        anims=["reposo", "caminar", "golpe", "danio", "derribado"],
+        ch=jugable(
+            piel=PIEL_MEDIA, pelo=NEGRO, estilo_pelo="capucha", capucha=CICLO_OSC,
+            mascara=CICLO, ojo_color=c,
+            cuerpo=CICLO_OSC, manga=CICLO, puno=c, banda=(c, c, c), dobladillo=CICLO,
+            simbolo="#5A5566", cinturon=c, bufanda=(c, c, c),
+            pantalon=CICLO_OSC, zapato=("#2B2230", "#3B3846", "#1A1420"), suela="#1A1420",
+        ),
+    )
+
+
+def ciudadano(piel, pelo, estilo, cuerpo, pantalon, extra=None):
+    ch = jugable(
+        piel=piel, pelo=pelo, estilo_pelo=estilo, ceja="#2B2230", trenza_lazo="#C9A227",
+        cuerpo=cuerpo, manga=cuerpo, pantalon=pantalon,
+        zapato=("#4A3B32", "#7A5230", "#2B2230"), suela="#2B2230",
+    )
+    if extra:
+        ch.update(extra)
+    return dict(carpeta="personajes", anims=["reposo", "caminar"], dirs=("abajo",), ch=ch)
+
+
+PERSONAJES.update({
+    "tsering": dict(
+        carpeta="personajes",
+        anims=["reposo", "caminar", "poder"],
+        ch=jugable(
+            piel=PIEL_MEDIA, pelo=BLANCO, estilo_pelo="calvo", ceja="#C8C8C0",
+            barba=("#F4F1E8", "#F4F1E8", "#C8C8C0"),
+            cuerpo=ROBA_TSERING, manga=ROBA_TSERING, abrigo=ROBA_TSERING,
+            abrigo_corte=("#C8C8C0", "#C8C8C0", "#9AA3A8"), dobladillo=AMARILLO,
+            cinturon="#E8D27A", hebilla="#C9A227", puno="#E8D27A",
+            bufanda=GRIS_AZUL, camisa=AMARILLO,
+            baston=("#7A5230", "#C29A5B", "#4A3B32"), baston_tope=("#C9A227", "#E8D27A", "#7A5230"),
+            pantalon=("#C8C8C0", "#F4F1E8", "#9AA3A8"),
+            zapato=("#7A5230", "#C29A5B", "#4A3B32"), suela="#4A3B32",
+        ),
+    ),
+    "norbu": dict(
+        carpeta="personajes",
+        anims=["reposo", "caminar", "golpe", "poder", "derribado"],
+        ch=jugable(
+            piel=PIEL_MEDIA, pelo=PELO_NEGRO, estilo_pelo="calvo", ceja="#2B2230",
+            cuerpo=CICLO_OSC, manga=CICLO_OSC, abrigo=CICLO_OSC,
+            abrigo_corte=("#1A1420", "#24222B", "#1A1420"), dobladillo=CICLO,
+            camisa=BLANCO, cinturon="#E8D27A", hebilla="#C9A227", puno="#E8D27A",
+            simbolo="#E8D27A", cierre="#5A5566",
+            pantalon=CICLO_OSC, zapato=("#2B2230", "#3B3846", "#1A1420"), suela="#1A1420",
+        ),
+    ),
+    "ciudadano_a": ciudadano(PIEL_CLARA, PELO_CAFE, "corto", ("#C9A227", "#E8D27A", "#7A5230"),
+                             ("#3B3846", "#5A5566", "#24222B")),
+    "ciudadano_b": ciudadano(PIEL_PROFUNDA, PELO_NEGRO, "trenza", ("#8E1B1B", "#D9481E", "#2B2230"),
+                             ("#7A5230", "#C29A5B", "#4A3B32"), dict(bufanda=("#F28C28", "#E8D27A", "#D9481E"))),
+    "ciudadano_c": ciudadano(PIEL_MEDIA, PELO_NEGRO, "puntas", ("#3A86C8", "#8FD3F0", "#1E4F8C"),
+                             ("#24222B", "#3B3846", "#1A1420")),
+})
+for _e in ELEMENTOS_SOLDADO:
+    PERSONAJES["soldado_" + _e] = soldado(_e)
+
 ANIMACIONES = [
     # (nombre, cuadros, direcciones)
     ("reposo", 2, ("abajo", "arriba", "derecha")),
@@ -91,8 +165,18 @@ ANIMACIONES = [
 ]
 
 
-def generar(nombre, animaciones=ANIMACIONES, guardar=True):
+def animaciones_de(cfg):
+    anims = cfg.get("anims")
+    out = []
+    for a, n, ds in ANIMACIONES:
+        if anims is None or a in anims:
+            out.append((a, n, cfg.get("dirs", ds) if len(ds) > 1 else ds))
+    return out
+
+
+def generar(nombre, animaciones=None, guardar=True):
     cfg = PERSONAJES[nombre]
+    animaciones = animaciones or animaciones_de(cfg)
     ch = cfg["ch"]
     salida = os.path.join(RAIZ, "juego", "assets", cfg["carpeta"])
     os.makedirs(salida, exist_ok=True)
@@ -110,28 +194,25 @@ def generar(nombre, animaciones=ANIMACIONES, guardar=True):
 
 
 def hoja_previa(nombres, escala=4):
-    """Hoja con todas las poses de cada personaje, sobre fondo gris."""
-    filas = []
+    """Hoja con las poses de cada personaje (una columna de bloques por personaje)."""
+    bloques = []
     for nombre in nombres:
         cuadros = generar(nombre, guardar=False)
-        fila_datos = []
-        for anim, n, dirs in ANIMACIONES:
+        filas = []
+        for anim, n, dirs in animaciones_de(PERSONAJES[nombre]):
             for d in dirs:
-                fila_datos.append([cuadros[(anim, d, f)] for f in range(n)])
-        filas.append((nombre, fila_datos))
-    # una fila por (anim, dir) y un bloque por personaje
-    etiquetas = [(a, d) for a, n, ds in ANIMACIONES for d in ds]
-    cols = max(n for _, n, _ in ANIMACIONES)
+                filas.append([cuadros[(anim, d, f)] for f in range(n)])
+        bloques.append(filas)
     celda = 32 * escala
-    ancho = len(nombres) * (cols * celda + 16) + 16
-    alto = len(etiquetas) * celda + 16
+    cols = 4
+    alto = max(len(f) for f in bloques) * celda + 16
+    ancho = len(bloques) * (cols * celda + 16) + 16
     hoja = Image.new("RGBA", (ancho, alto), (58, 54, 70, 255))
-    for ci, (nombre, datos) in enumerate(filas):
+    for ci, filas in enumerate(bloques):
         ox = 16 + ci * (cols * celda + 16)
-        for ri, frames in enumerate(datos):
+        for ri, frames in enumerate(filas):
             for fi, img in enumerate(frames):
-                g = img.resize((celda, celda), Image.NEAREST)
-                hoja.alpha_composite(g, (ox + fi * celda, 8 + ri * celda))
+                hoja.alpha_composite(img.resize((celda, celda), Image.NEAREST), (ox + fi * celda, 8 + ri * celda))
     return hoja
 
 
