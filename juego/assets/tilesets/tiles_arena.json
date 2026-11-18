@@ -1,0 +1,18 @@
+{
+  "tamano_tile": 32,
+  "columnas": 8,
+  "tiles": {
+    "0": "plataforma",
+    "1": "plataforma_b",
+    "2": "plataforma_grieta",
+    "3": "borde_s",
+    "4": "cara_inferior",
+    "5": "borde_n",
+    "6": "borde_e",
+    "7": "borde_o",
+    "8": "cielo",
+    "9": "nubes",
+    "10": "nubes_borde_arriba",
+    "11": "nubes_borde_abajo"
+  }
+}
