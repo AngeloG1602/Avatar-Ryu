@@ -13,45 +13,59 @@ from paleta import CONTORNO, a_rgb, fuera_de_paleta
 RAIZ = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 OX = 6
 
+
+def filas(segmentos):
+    """Construye 32 filas de 20 columnas a partir de {fila: [(columna, texto), ...]}."""
+    out = []
+    for y in range(32):
+        f = ["."] * 20
+        for x0, txt in segmentos.get(y, []):
+            for i, ch in enumerate(txt):
+                assert 0 <= x0 + i < 20, (y, x0, txt)
+                f[x0 + i] = ch
+        out.append("".join(f))
+    return out
+
+
 # ------------------------------------------------------------------ Ryu
-RYU_ABAJO = [
-    "....................",  # 0
-    "..........h.........",  # 1
-    ".....h...hh...h.....",  # 2
-    ".....HH..HHh.HH.....",  # 3
-    "....HHH.HHhH.HHH....",  # 4
-    "...HHHHHHHHHHHHHH...",  # 5
-    "..HHHggHHHHHggHHHH..",  # 6
-    ".HHHHHggggggHHHHHHH.",  # 7
-    "..HHHHHHHHHHHHHHHH..",  # 8
-    "..HHjHHHjHHHjHHHHH..",  # 9
-    "..HHSHHSSHHSSHHSHH..",  # 10
-    "..HHsSSHSSSSHSSSHH..",  # 11
-    "..HHSSEESSSSEESSHH..",  # 12
-    "..HHSSIESSSSEISSHH..",  # 13
-    "..jHSSSSSSKSSSSSHj..",  # 14
-    "....KSSMMMMMSSSK....",  # 15
-    ".....KSSSSSSSSK.....",  # 16
-    "......KKKKKKKK......",  # 17
-    "...cCCDBBBBBBDCCD...",  # 18
-    "..ccCCTBBBBBBTCCDD..",  # 19
-    "..cDCCTBBbBBBTCCDD..",  # 20
-    "..cDCCTBBBBBBTCCDD..",  # 21
-    "..TTCCTBBBBBBTCCTT..",  # 22
-    "..SSTTTBBBBBBTTTKK..",  # 23
-    "....PPPPPPPPPPPP....",  # 24
-    "....pPPPPQQPPPPQ....",  # 25
-    ".....pPPP..pPPQ.....",  # 26
-    ".....pPPP..pPPQ.....",  # 27
-    ".....zZZZ..zZZZ.....",  # 28
-    ".....ZZZZ..ZZZZ.....",  # 29
-    ".....XXXX..XXXX.....",  # 30
-    "....................",  # 31
-]
+# Ryu: pelo corto en puntas con lados rapados, orejas visibles, mandíbula cuadrada,
+# cejas gruesas, sonrisa de lado y hombros anchos.
+RYU_ABAJO = filas({
+    1: [(10, "h")],
+    2: [(5, "h"), (9, "hh"), (14, "h")],
+    3: [(5, "Hh"), (9, "HHh"), (13, "hH")],
+    4: [(4, "HHH"), (8, "HHHHH"), (13, "HHH")],
+    5: [(3, "HHHHHHHHHHHHHH")],
+    6: [(2, "HHHHggHHHHggHHHH")],
+    7: [(2, "HHHHHHggggHHHHHH")],
+    8: [(3, "HHHHHHHHHHHHHH")],
+    9: [(3, "jHHHjHHHHjHHHj")],
+    10: [(3, "jSHHSSHHSSHHSj")],
+    11: [(3, "KSEEESSSSEEESK")],
+    12: [(2, "S"), (3, "KSSSSSSSSSSSSK"), (17, "S")],
+    13: [(2, "K"), (3, "SSSIESSSSEISSS"), (17, "K")],
+    14: [(3, "KSSSSSSKSSSSSK")],
+    15: [(3, "KSSSSSSSSSSSSK")],
+    16: [(4, "KSSSSMMMSSSK")],
+    17: [(5, "KKSSSSSSKK")],
+    18: [(6, "KKKKKKKK")],
+    19: [(2, "cCCCDBBBBBBDCCCD")],
+    20: [(1, "cCDCCTBBBBBBTCCDDD")],
+    21: [(1, "cCDCCTBBbBBBTCCDDD")],
+    22: [(1, "cCDCCTBBBBBBTCCDDD")],
+    23: [(1, "TTDCCTBBBBBBTCCDTT")],
+    24: [(1, "SSTTTTBBBBBBTTTTKK")],
+    25: [(4, "PPPPPPPPPPPP")],
+    26: [(4, "pPPPPQQPPPPQ")],
+    27: [(5, "pPPP"), (11, "pPPQ")],
+    28: [(5, "zZZZ"), (11, "zZZZ")],
+    29: [(5, "ZZZZ"), (11, "ZZZZ")],
+    30: [(5, "XXXX"), (11, "XXXX")],
+})
 RYU_COLORES = {
     "H": "#2B2230", "h": "#8E1B1B", "g": "#3B3846", "j": "#24222B",  # pelo negro, puntas rojas
     "S": "#F2C9A0", "s": "#F2C9A0", "K": "#D9A06B",            # piel
-    "E": "#2B2230", "I": "#F28C28", "W": "#F4F1E8", "M": "#2B2230",
+    "E": "#2B2230", "I": "#F28C28", "W": "#F4F1E8", "M": "#A86B3C",
     "C": "#D9481E", "c": "#F28C28", "D": "#8E1B1B",            # chaqueta roja
     "B": "#2B2230", "b": "#3B3846",                            # camiseta negra
     "T": "#C9A227",                                            # ribete dorado
@@ -105,48 +119,45 @@ GAO_COLORES = {
     "Z": "#4A3B32", "z": "#7A5230", "X": "#2B2230",            # botas
 }
 
-# ------------------------------------------------------------------ Nerea (rediseño)
-# Pelo largo y ondulado con medio moño atado con una cinta azul, flequillo de lado,
-# chaqueta corta azul con top blanco, faja celeste anudada, mallas oscuras y botas blancas.
-NEREA_ABAJO = [
-    "....................",  # 0
-    "........jHHj........",  # 1
-    "........HhHH........",  # 2
-    ".......xXXXXX.......",  # 3
-    ".....HHHHHHHHHH.....",  # 4
-    "....HHHHHHHHHHHH....",  # 5
-    "...HHhhhhHHHHHHH....",  # 6
-    "..HHHHHhhhhHHHHHH...",  # 7
-    "..HHHHHHHHHHHHHjHH..",  # 8
-    "..HHHHHHHHHHjjSSHH..",  # 9
-    "..HHHHHHHHjjSSSSHH..",  # 10
-    "..HHHHHHjjSSSSSSHH..",  # 11
-    "..HHHEEESSSSEEESHH..",  # 12
-    "..HHSSIESSSSEISSHH..",  # 13
-    "..HHSCSSSSKSSSCSHH..",  # 14
-    "..HHKSSSSMMSSSSKHH..",  # 15
-    "..HHHKSSSSSSSSKHHH..",  # 16
-    ".HhHHHKKKKKKKKHHjHH.",  # 17
-    ".HhccCCCBBBBCCCDDHH.",  # 18
-    ".HhcDCCCBBBBCCCDDjH.",  # 19
-    ".HHcDCCCBVBBCCCDDHH.",  # 20
-    ".jHcDTTTTTTTTTTDDHj.",  # 21
-    ".HHXXCCCCtTCCCCXXHH.",  # 22
-    "..jSSCCCCTtCCCCKKj..",  # 23
-    "..HHPPPPPTtPPPPPHH..",  # 24
-    "......pPP..pPQ......",  # 25
-    "......pPP..pPQ......",  # 26
-    "......zZZ..ZZZ......",  # 27
-    "......zZZ..ZZZ......",  # 28
-    ".....VVVV..VVVV.....",  # 29
-    "....................",  # 30
-    "....................",  # 31
-]
+# ------------------------------------------------------------------ Nerea (rediseño 2)
+# Cola de caballo alta con lazo azul que cae por detrás a la derecha, flequillo abierto
+# al centro que enmarca la cara, piel clara, chaqueta corta azul con top blanco y faja celeste.
+NEREA_ABAJO = filas({
+    1: [(12, "HHh")],
+    2: [(11, "HHhHH")],
+    3: [(6, "HHHHXx"), (12, "HhHHj")],
+    4: [(5, "HHHHHHHHHHH"), (16, "HhH")],
+    5: [(4, "HHHHHHHHHHHH"), (16, "HhHj")],
+    6: [(3, "HHhhhhHHHHHHH"), (16, "HhHj")],
+    7: [(3, "HHHHHhhhhHHHH"), (16, "HhHj")],
+    8: [(3, "HHHHHHjjHHHHH"), (16, "HhHj")],
+    9: [(3, "HHHHHHSSHHHHH"), (16, "HhHj")],
+    10: [(3, "HHHHHSSSSHHHH"), (16, "HhHj")],
+    11: [(3, "HHHHSSSSSSHHH"), (16, "HhH")],
+    12: [(3, "HHEEESSSSEEEH"), (16, "HhH")],
+    13: [(3, "HHSIESSSSEISH"), (16, "HhH")],
+    14: [(3, "HHSCSSSKSSCSH"), (16, "HhH")],
+    15: [(3, "HHKSSSMMSSSKH"), (16, "HhH")],
+    16: [(3, "HH"), (6, "KSSSSSSK"), (15, "H"), (16, "Hhj")],
+    17: [(3, "H"), (7, "KKKKKK"), (17, "hj")],
+    18: [(3, "ccCCCBBBBCCCDD"), (17, "Hj")],
+    19: [(3, "cDCCCBBBBCCCDD"), (17, "Hj")],
+    20: [(3, "cDCCCBVBBCCCDD"), (17, "j")],
+    21: [(3, "cDTTTTTTTTTTDD"), (17, "j")],
+    22: [(3, "XXCCCCtTCCCCXX")],
+    23: [(3, "SSCCCCTtCCCCKK")],
+    24: [(4, "PPPPPTtPPPPP")],
+    25: [(6, "pPP"), (11, "pPQ")],
+    26: [(6, "pPP"), (11, "pPQ")],
+    27: [(6, "zZZ"), (11, "ZZZ")],
+    28: [(6, "zZZ"), (11, "ZZZ")],
+    29: [(5, "VVVV"), (11, "VVVV")],
+})
 NEREA_COLORES = {
-    "H": "#2B2230", "h": "#1E4F8C", "j": "#24222B",            # pelo negro con brillo azul
-    "x": "#8FD3F0", "X": "#3A86C8",                            # cinta del moño / puños
-    "S": "#A86B3C", "s": "#D9A06B", "K": "#6E4426", "C_": "",
-    "E": "#2B2230", "I": "#3A86C8", "W": "#F4F1E8", "M": "#6E4426",
+    "H": "#4A3B32", "h": "#7A5230", "j": "#2B2230",            # pelo castaño oscuro
+    "x": "#8FD3F0", "X": "#3A86C8",                            # lazo de la coleta
+    "S": "#F2C9A0", "s": "#F2C9A0", "K": "#D9A06B",            # piel clara
+    "E": "#2B2230", "I": "#3A86C8", "W": "#F4F1E8", "M": "#A86B3C",
     "C": "#3A86C8", "c": "#8FD3F0", "D": "#1E4F8C",            # chaqueta azul
     "B": "#F2F7FA", "V": "#8FD3F0",                            # top blanco
     "T": "#8FD3F0", "t": "#F2F7FA",                            # faja celeste
