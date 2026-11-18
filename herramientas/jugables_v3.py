@@ -320,13 +320,12 @@ def piernas(g, desde, centro=10):
     return izq, der
 
 
-def cerrar_ojos(g):
-    for y in range(9, 17):
+def cerrar_ojos(g, mapa=None):
+    mapa = mapa or {"I": "S", "W": "S", "M": "E"}
+    for y in range(6, 18):
         for x in range(W):
-            if g[y][x] in ("I", "W"):
-                g[y][x] = "S"
-            elif g[y][x] == "M":
-                g[y][x] = "E"
+            if g[y][x] in mapa:
+                g[y][x] = mapa[g[y][x]]
 
 
 # ================================================================== animaciones
@@ -440,7 +439,7 @@ def cuadro(nombre, d, anim, f):
         b = bloque(g, bd[0], bd[1], by0, by1)
         pegar(g, a, dx=-1, dy=-2)
         pegar(g, b, dx=1, dy=-2)
-        cerrar_ojos(g)
+        cerrar_ojos(g, cfg.get("ojos_cerrados"))
 
     return render(texto(g), cfg["colores"])
 
