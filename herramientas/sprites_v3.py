@@ -220,3 +220,68 @@ if __name__ == "__main__":
     hoja.save(os.path.join(RAIZ, "arte_fuente", "previews", "v3_frente.png"))
     real.save(os.path.join(RAIZ, "arte_fuente", "previews", "v3_frente_x3.png"))
     print("ok")
+
+
+# ------------------------------------------------------------------ Ryu: dos alternativas más masculinas
+_RYU_CARA_CUERPO = {
+    10: [(4, "KEESSSSSSEEK")],
+    11: [(3, "S"), (4, "KSSESSSSESSK"), (16, "S")],
+    12: [(3, "K"), (4, "KSIESSSSEISK"), (16, "K")],
+    13: [(4, "KSSSSSKSSSSK")],
+    14: [(4, "KKSSSSSSSSKK")],
+    15: [(4, "KSSSSMMMSSSK")],
+    16: [(5, "KSSSSSSSSK")],
+    17: [(6, "KKSSSSKK")],
+    18: [(6, "KKKKKKKK")],
+    19: [(2, "cCCCDBBBBBBDCCCD")],
+    20: [(1, "cCDCCTBBBBBBTCCDDD")],
+    21: [(1, "cCDCCTBBbBBBTCCDDD")],
+    22: [(1, "cCDCCTBBBBBBTCCDDD")],
+    23: [(1, "TTDCCTBBBBBBTCCDTT")],
+    24: [(1, "SSTTTTBBBBBBTTTTKK")],
+    25: [(4, "PPPPPPPPPPPP")],
+    26: [(4, "pPPPPQQPPPPQ")],
+    27: [(5, "pPPP"), (11, "pPPQ")],
+    28: [(5, "zZZZ"), (11, "zZZZ")],
+    29: [(5, "ZZZZ"), (11, "ZZZZ")],
+    30: [(5, "XXXX"), (11, "XXXX")],
+}
+
+# A: peinado hacia atrás en puntas, lados rapados, un mechón suelto en la frente
+RYU_A = filas({
+    1: [(7, "h"), (11, "h")],
+    2: [(6, "hH"), (10, "hHh"), (14, "h")],
+    3: [(5, "HHHhHHHHhHH")],
+    4: [(4, "HHHHHHHHHHHH")],
+    5: [(4, "HHHggggHHHHH")],
+    6: [(4, "jHHHHHHHHHHj")],
+    7: [(4, "jjHHHHHHHHjj")],
+    8: [(4, "jSSHSSSSSSSj")],
+    9: [(4, "KSSHSSSSSSSK")],
+    **_RYU_CARA_CUERPO,
+})
+
+# B: pelo corto revuelto con bandana roja anudada a un lado
+RYU_B = filas({
+    3: [(6, "H"), (9, "Hh"), (13, "H")],
+    4: [(5, "HHhHHHHhHH")],
+    5: [(4, "HHHHHgHHHHHH")],
+    6: [(4, "rrrrrrrrrrrr")],
+    7: [(4, "RRRRRRRRRRRR"), (16, "RD")],
+    8: [(4, "HSHHSSSHHSSH"), (16, "DR")],
+    9: [(4, "KSSHSSSSSSSK"), (17, "D")],
+    **_RYU_CARA_CUERPO,
+})
+
+RYU_COLORES_V2 = dict(RYU_COLORES)
+RYU_COLORES_V2.update({"R": "#D9481E", "r": "#F28C28", "D": "#8E1B1B"})
+
+
+if __name__ == "__main__":
+    E = 10
+    imgs = [render(RYU_A, RYU_COLORES), render(RYU_B, RYU_COLORES_V2),
+            render(*PRUEBA["gao"]), render(*PRUEBA["nerea"])]
+    hoja = Image.new("RGBA", (len(imgs) * (32 * E + 10) + 10, 32 * E + 20), (58, 54, 70, 255))
+    for i, im in enumerate(imgs):
+        hoja.alpha_composite(im.resize((32 * E, 32 * E), Image.NEAREST), (10 + i * (32 * E + 10), 10))
+    hoja.save(os.path.join(RAIZ, "arte_fuente", "previews", "v3_ryu_opciones.png"))
